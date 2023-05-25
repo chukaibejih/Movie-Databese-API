@@ -1,0 +1,26 @@
+{
+  "name": "movie-database-api",
+  "version": "1.0.0",
+  "description": "Movie Database REST API that provides access to a movie database. Users can search for movies, retrieve movie details, and get information about actors, directors, and other related data.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --recursive --exist",
+    "serve": "node app.js",
+    "start": "nodemon app.js"
+  },
+  "author": "Chukwuka Ibejih",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "chai-http": "^4.3.0",
+    "mocha": "^10.2.0"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "joi": "^17.9.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.2.0"
+  }
+}
