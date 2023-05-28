@@ -38,8 +38,17 @@ const createMovieValidation = (data) => {
     return schema.validate(data)
 }
 
+const postReviewValidation = (data) => {
+    const schema = Joi.object({
+        userId: Joi.string().required(), 
+        comment: Joi.string().required()
+    });
+    return schema.validate(data)
+}
+
 
 module.exports.registrationValidation = registrationValidation 
 module.exports.loginValidation = loginValidation 
 module.exports.refreshTokenValidation = refreshTokenValidation
 module.exports.createMovieValidation = createMovieValidation
+module.exports.postReviewValidation = postReviewValidation

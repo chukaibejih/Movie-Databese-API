@@ -1,12 +1,21 @@
 const mongoose = require('mongoose');
 
 const reviewSchema = mongoose.Schema({
-  userId: String,
-  comment: String,
-  timestamp: Date
-});
+    userId: {
+        type: String,
+        required: true
+    },
+    comment: {
+        type: String,
+        required: true
+    },
+},
+    {
+        timestamps: true
+    }
+);
 
-const MovieSchema = mongoose.Schema({
+const movieSchema = mongoose.Schema({
   title: {
     type: String,
     required: true
@@ -40,6 +49,7 @@ const MovieSchema = mongoose.Schema({
   }
 });
 
-const Movie = mongoose.model('Movie', MovieSchema);
+const Movie = mongoose.model('Movie', movieSchema);
+const Review = mongoose.model('Review', reviewSchema);
 
-module.exports = Movie;
+module.exports = Movie, Review;
