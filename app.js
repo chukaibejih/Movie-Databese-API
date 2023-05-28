@@ -3,6 +3,7 @@ require('dotenv').config()
 const { default: mongoose } = require('mongoose')
 const port = (process.env.PORT || 3000)
 const userRoute = require('./routes/auth')
+const movieRoute = require('./routes/movie')
 const app = express()
 
 app.use(express.json())
@@ -13,6 +14,7 @@ app.get('/', (req, res) => {
 
 // router middleware
 app.use('/api/users/', userRoute)
+app.use('/api/movies/', movieRoute)
 
 mongoose
 .connect(process.env.MONGODB_URI)

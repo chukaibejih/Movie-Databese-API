@@ -7,6 +7,7 @@ const { registrationValidation, loginValidation, refreshTokenValidation } = requ
 const { generateTokens } = require('../utils/generateToken')
 const { verifyRefreshToken } = require('../utils/verifyRefreshToken')
 
+
 router.post('/register', async (req, res) => {
     
     try {
