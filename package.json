@@ -4,7 +4,7 @@
   "description": "Movie Database REST API that provides access to a movie database. Users can search for movies, retrieve movie details, and get information about actors, directors, and other related data.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive --exist",
+    "test": "mocha --recursive test --exit",
     "serve": "node app.js",
     "start": "nodemon app.js"
   },
