@@ -18,5 +18,13 @@ const loginValidation = (data) => {
     return loginSchema.validate(data)
 }
 
+const refreshTokenValidation = (data) => {
+    const schema = Joi.object({
+        refreshToken: Joi.string().required().label("Refresh Token"),
+    });
+    return schema.validate(data);
+};
+
 module.exports.registrationValidation = registrationValidation 
 module.exports.loginValidation = loginValidation 
+module.exports.refreshTokenValidation = refreshTokenValidation

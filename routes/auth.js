@@ -3,8 +3,9 @@ const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const saltRounds = 10
 const jwt = require('jsonwebtoken')
-const { registrationValidation, loginValidation } = require('../utils/validation')
+const { registrationValidation, loginValidation, refreshTokenValidation } = require('../utils/validation')
 const { generateTokens } = require('../utils/generateToken')
+const { verifyRefreshToken } = require('../utils/verifyRefreshToken')
 
 router.post('/register', async (req, res) => {
     
@@ -64,12 +65,33 @@ router.post('/login', async (req, res) => {
 
     // create and sign jwt for logged in user
     const { accessToken, refreshToken } = await generateTokens(user)
-    console.log(accessToken)
     res.status(200).json({message:'Logged in', access_token:accessToken, refresh_token: refreshToken})
   } catch (error) {
         res.status(500).json({error: error.message})
   }
 });
 
+router.post('/refresh', async (req, res) => {
+    const { refreshToken } = req.body;
+  
+    const { error } = refreshTokenValidation(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
+  
+    try {
+      const { tokenDetails } = await verifyRefreshToken(refreshToken);
+      console.log(tokenDetails)
+      const payload = { id: tokenDetails._id, roles: tokenDetails.roles };
+      const accessToken = jwt.sign(payload, process.env.ACCESS_PRIVATE_KEY);
+      return res.status(200).json({
+        message: 'Access token created successfully',
+        access_token: accessToken,
+      });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+  
 
 module.exports = router
