@@ -5,7 +5,8 @@ const registrationValidation = (data) => {
         name: Joi.string().min(3).max(200).required(),
         email: Joi.string().min(8).max(200).required(),
         password: Joi.string().min(8).required(),
-        age: Joi.number().min(18).required()
+        age: Joi.number().min(18).required(),
+        role: Joi.string().required().valid("user", "admin", "super_admin")
     });
     return schema.validate(data)
 }

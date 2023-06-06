@@ -4,9 +4,12 @@ const { default: mongoose } = require('mongoose')
 const port = (process.env.PORT || 3000)
 const userRoute = require('./routes/auth')
 const movieRoute = require('./routes/movie')
+const swagger = require('./swagger')
 const app = express()
 
 app.use(express.json())
+// invoke swagger config
+swagger(app)
 
 app.get('/', (req, res) => {
     console.log("Hello World")

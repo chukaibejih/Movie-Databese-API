@@ -23,7 +23,7 @@ const userSchema = mongoose.Schema({
         type: Number,
         min: 18
     },
-    roles: {
+    role: {
         type: [String],
         enum: ["user", "admin", "super_admin"]
     },

@@ -16,27 +16,27 @@ const verifyRefreshToken = async (refreshToken) => {
     console.log(tokenDetails)
     return { message: 'Valid refresh token', tokenDetails };
   } catch (error) {
-    throw { error: 'Invalid refresh token' };
+      throw { error: 'Invalid refresh token' };
   }
 };
 
-const verifyAcessToken = (req, res, next) => {
+const verifyAccessToken = (req, res, next) => {
   const privateKey = process.env.ACCESS_PRIVATE_KEY;
 
   const header = req.header('Authorization')
   const token = header && header.split(' ')[1]
 
   if(!token) {
-    throw { error: 'Access denied. Token missing.'}
+    return res.status(401).json({error: "Access denied. Token missing."})
   }
   try {
-    const decoded = jwt.verify(token, privateKey)
-    req.user = decoded
+    const decoded = jwt.verify(token, process.env.ACCESS_PRIVATE_KEY)
+    req.user = decoded._id
     next()
   } catch (error) {
-    res.status(401).json({error: "Invalid token"})
+    return res.status(401).json({error: "Invalid token"})
   }
 }
 
 module.exports.verifyRefreshToken = verifyRefreshToken;
-module.exports.verifyAcessToken = verifyAcessToken;
+module.exports.verifyAccessToken = verifyAccessToken;

@@ -50,6 +50,4 @@ const movieSchema = mongoose.Schema({
 });
 
 const Movie = mongoose.model('Movie', movieSchema);
-const Review = mongoose.model('Review', reviewSchema);
-
-module.exports = Movie, Review;
+module.exports = Movie

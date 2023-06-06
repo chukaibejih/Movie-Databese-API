@@ -11,18 +11,18 @@ const { verifyRefreshToken } = require('../utils/verifyRefreshToken')
 router.post('/register', async (req, res) => {
     
     try {
-        const { name, email, password, age } = req.body
+        const { name, email, password, age, role } = req.body
 
         // validate the request
         const { error } = registrationValidation(req.body)
         if(error){
-            res.status(400).json({error: error.details[0].message})
+            return res.status(400).json({error: error.details[0].message})
         }
 
         // check if user exists
         const existingUser = await User.findOne({ email })
         if(existingUser) {
-            res.status(400).json({error: "User already exist"})
+            return res.status(400).json({error: "User already exist"})
         }
 
         // hash password
@@ -33,14 +33,15 @@ router.post('/register', async (req, res) => {
             name,
             email,
             password: hashedpassword,
-            age
+            age,
+            role
         });
 
         await user.save()
-        res.status(200).json({message:"Registration Successful", user:user})
+        return res.status(200).json({message:"Registration Successful", user:user})
         
     } catch (error) {
-        res.status(500).json({error:error.message})
+        return res.status(500).json({error:error.message})
     }
 });
 
@@ -56,19 +57,19 @@ router.post('/login', async (req, res) => {
 
     const user = await User.findOne({ email })
     if(!user) {
-        res.status(400).json({error: 'Invalid User'})
+        return res.status(400).json({error: 'Invalid User'})
     }
 
     const validPassword = await bcrypt.compare(password, user.password)
     if(!validPassword){
-        res.status(400).json({error: "Invalid Password"})
+        return res.status(400).json({error: "Invalid Password"})
     }
 
     // create and sign jwt for logged in user
     const { accessToken, refreshToken } = await generateTokens(user)
-    res.status(200).json({message:'Logged in', access_token:accessToken, refresh_token: refreshToken})
+    return res.status(200).json({message:'Logged in', access_token:accessToken, refresh_token: refreshToken})
   } catch (error) {
-        res.status(500).json({error: error.message})
+        return res.status(500).json({error: error.message})
   }
 });
 
