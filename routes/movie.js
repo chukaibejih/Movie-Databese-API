@@ -41,13 +41,27 @@ const router = require('express').Router()
  *         runtime:
  *           type: string
  *           description: The duration of the movie
- *       
+ *     Review:
+ *       type: object
+ *       required: 
+ *         - userId
+ *         - comment
+ *       properties:
+ *         userId:
+ *           type: string
+ *           description: User's ID
+ *         comment:
+ *           type: string
+ *           description: Review comment
  */
+
 /**
  * @swagger
  * tags:
- *   name: Movies
- *   description: Movies Endpoint
+ *   - name: Movies
+ *     description: Movies Endpoint
+ *   - name: Review
+ *     description: Review Endpoint
  */
 
 
@@ -163,30 +177,87 @@ router.post('/', async (req, res) => {
 
 // search for a movie
 
-router.get('/search', async (req, res) => {
-    const { keyword } = req.query
-    const query = {}
+/**
+ * @swagger
+ * /api/movies/search:
+ *   get:
+ *     summary: Partial search
+ *     tags: [Movies]
+ *     parameters:
+ *      - in: query
+ *        name: keyword
+ *        required: true
+ *        schema:
+ *         type: string
+ *         description: Keyword to search for movie
+ *     responses:
+ *       200:
+ *         description: Successful response with the movie details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                $ref: '#/components/schemas/Movie'
+ *       404:
+ *         description: Not found
+ *       500:
+ *         description: Internal server error
+ *
+ */
 
-    // perform partial search using regular expression
+router.get('/api/movies/search', async (req, res) => {
+    const { keyword } = req.query;
+    const query = {};
+  
+    // Perform partial search using regular expression
     query.$or = [
-        {title: { $regex: new RegExp(keyword, 'i')}},
-        {genre: { $regex: new RegExp(keyword, 'i')}},
-        {cast: { $regex: new RegExp(keyword, 'i')}},
-        {directors: { $regex: new RegExp(keyword, 'i')}},
-        // {year: { $regex: new RegExp(keyword, 'i')}},
-    ]
-
+      { title: { $regex: new RegExp(keyword, 'i') } },
+      { genre: { $regex: new RegExp(keyword, 'i') } },
+      { cast: { $regex: new RegExp(keyword, 'i') } },
+      { directors: { $regex: new RegExp(keyword, 'i') } }
+    ];
+    
     try {
-        const matchedMovies  = await Movie.find(query)
-        res.status(200).json(matchedMovies)
+        const matchedMovies = await Movie.find(query);
+        if (matchedMovies.length === 0) {
+        res.status(404).json({ message: 'Movie not found' });
+        } 
+        res.status(200).json(matchedMovies);
     } catch (error) {
-       res.status(500).json({error: error.message}) 
+      res.status(500).json({ error: error.message });
     }
-})
-
+  });
+  
 
 // User Reviews
 
+/**
+ * @swagger
+ * /api/movies/{movieId}/reviews:
+ *   get:
+ *     summary: Get reviews of a movie
+ *     tags: [Movies]
+ *     parameters:
+ *      - in: path
+ *        name: movieId
+ *        required: true
+ *        schema:
+ *         type: string
+ *         description: ID for the movie to retrieve it's reviews
+ *     responses:
+ *       200:
+ *         description: Successful response with the movie reviews
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Movie'
+ *       400:
+ *         description: Invalid movie ID or request
+ *       500:
+ *         description: Internal server error
+ *
+ */
 router.get('/:movieId/reviews', async (req, res) => {
     try {
         const { movieId } = req.params
@@ -198,6 +269,38 @@ router.get('/:movieId/reviews', async (req, res) => {
     }
 });
 
+
+// post review
+
+ /**
+ * @swagger
+ * /api/movies/{movieId}/reviews:
+ *   post:
+ *     summary: Post a new review
+ *     tags: [Movies]
+ *     parameters:
+ *      - in: path
+ *        name: movieId
+ *        required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Review'
+ *     responses:
+ *       200:
+ *         description: Review posted Successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Review'
+ *       400:
+ *         description: Some validation error
+ *       500:
+ *         description: Some server error
+ *
+ */
 router.post('/:movieId/reviews', async (req, res) => {
     try {
         const { movieId } = req.params
